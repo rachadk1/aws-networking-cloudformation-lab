@@ -315,6 +315,17 @@ Resources:
         - Key: Name
           Value: lab-backend-ec2
 
+    # 21 - S3 Gateway Endpoint for private subnet
+  S3GatewayEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcEndpointType: Gateway
+      VpcId: !Ref LabVPC
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
+      RouteTableIds:
+        - !Ref PrivateRouteTable
+
+
 Outputs:
   BastionPublicIP:
     Condition: CreateEC2
@@ -330,3 +341,6 @@ Outputs:
     Condition: CreateEC2
     Description: Private IP of Backend EC2
     Value: !GetAtt BackendInstance.PrivateIp
+
+
+  
