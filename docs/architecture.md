@@ -1,6 +1,8 @@
 # Architecture et parcours pédagogique
 
-[Accueil et diagramme](../README.md) · [Déploiement](deployment-guide.md)
+[Français](architecture.md) | [English](en/architecture.md)
+
+[Accueil et diagramme](../README.fr.md) · [Déploiement](deployment-guide.md)
 
 ## Réseau réellement décrit par le template
 
