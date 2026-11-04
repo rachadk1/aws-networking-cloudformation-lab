@@ -7,6 +7,16 @@ Parameters:
   AdminCidr:
     Type: String
     Description: Your public IPv4 address in /32 CIDR notation
+  EnableNatGateway:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Enable or disable the NAT Gateway
+
+Conditions:
+  CreateNatGateway: !Equals [!Ref EnableNatGateway, 'true']
 
 Resources:
 
@@ -179,3 +189,38 @@ Resources:
       Tags:
         - Key: Name
           Value: lab-backend-sg
+
+
+  # 15 - Elastic IP for NAT Gateway
+  NatEIP:
+    Type: AWS::EC2::EIP
+    Condition: CreateNatGateway
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: lab-nat-eip
+
+  # 16 - Public NAT Gateway
+  LabNatGateway:
+    Type: AWS::EC2::NatGateway
+    Condition: CreateNatGateway
+    DependsOn: PublicDefaultRoute
+    Properties:
+      AllocationId: !GetAtt NatEIP.AllocationId
+      SubnetId: !Ref BastionSubnet
+      ConnectivityType: public
+      AvailabilityMode: zonal
+      Tags:
+        - Key: Name
+          Value: lab-nat-gateway
+
+  # 17 - Default route for private subnet
+  PrivateDefaultRoute:
+    Type: AWS::EC2::Route
+    Condition: CreateNatGateway
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref LabNatGateway
