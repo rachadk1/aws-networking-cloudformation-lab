@@ -1,5 +1,7 @@
 # AWS Networking & CloudFormation Lab
 
+[English](README.md) | [Français](README.fr.md)
+
 Build a three-instance AWS network with Infrastructure as Code, then configure a private MariaDB server with Bash. Practice VPC routing, security groups, SSH through a bastion, an optional NAT Gateway, and private access to S3-backed Amazon Linux repositories.
 
 **Scope: steps 01–07.** CloudFormation provisions the network and EC2 instances. The MariaDB script is copied and run manually over SSH. Systems Manager and CI/CD deployment are future work.
@@ -13,13 +15,13 @@ git clone --branch develop https://github.com/rachadk1/aws-networking-cloudforma
 cd aws-networking-cloudformation-lab
 ```
 
-The reproduction guides are in French. Use your own AWS account, regional EC2 key pair, and administrator IPv4 address.
+All five reproduction guides are available in English and French. Use your own AWS account, regional EC2 key pair, and administrator IPv4 address.
 
-1. [Prerequisites and costs](docs/prerequisites.md)
-2. [Architecture and seven learning steps](docs/architecture.md)
-3. [Deployment, SSH and MariaDB setup](docs/deployment-guide.md)
-4. [Validation and troubleshooting](docs/validation-tests.md)
-5. [Backup and cleanup](docs/cleanup.md)
+1. [Prerequisites and costs](docs/en/prerequisites.md)
+2. [Architecture and seven learning steps](docs/en/architecture.md)
+3. [Deployment, SSH and MariaDB setup](docs/en/deployment-guide.md)
+4. [Validation and troubleshooting](docs/en/validation-tests.md)
+5. [Backup and cleanup](docs/en/cleanup.md)
 
 ## Architecture
 
@@ -63,11 +65,26 @@ The diagram shows permitted paths. The frontend serves a static Apache page; dat
 
 `LaunchEc2Instances` and `EnableNatGateway` both default to `false`. The full walkthrough explicitly enables EC2 and leaves NAT disabled. The S3 endpoint is always provisioned.
 
+## Language coverage
+
+| Content | English | Français |
+| --- | --- | --- |
+| Project overview | [README](README.md) | [Présentation](README.fr.md) |
+| Prerequisites and costs | [Guide](docs/en/prerequisites.md) | [Guide](docs/prerequisites.md) |
+| Architecture and steps | [Guide](docs/en/architecture.md) | [Guide](docs/architecture.md) |
+| Deployment and SSH | [Guide](docs/en/deployment-guide.md) | [Guide](docs/deployment-guide.md) |
+| Validation and troubleshooting | [Guide](docs/en/validation-tests.md) | [Guide](docs/validation-tests.md) |
+| Backup and cleanup | [Guide](docs/en/cleanup.md) | [Guide](docs/cleanup.md) |
+
+CloudFormation comments/descriptions, the demonstration page, script messages/comments, and `.gitignore` comments include both languages. Resource identifiers, tags, file paths, CLI options, and SQL names stay stable so commands remain compatible. Update both language versions together when changing a guide. Older step branches preserve historical snapshots; use `develop` for the current bilingual lab.
+
 ## Repository
 
 - `cloudformation/network-lab.yaml` — infrastructure template.
 - `scripts/setup-mariadb.sh` — MariaDB setup and application grants.
-- `docs/` — reproduction, validation and cleanup guides.
+- `docs/` — French reproduction, validation and cleanup guides.
+- `docs/en/` — complete English versions of those guides.
+- `README.fr.md` — French project overview.
 - `.gitignore` — common local credentials, parameters and database dumps.
 
 ## Learning boundaries

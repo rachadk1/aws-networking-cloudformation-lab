@@ -1,4 +1,4 @@
-# Local AWS/SSH credentials
+# Local AWS/SSH credentials / Identifiants AWS/SSH locaux
 .aws/
 .ssh/
 *.pem
@@ -7,17 +7,17 @@
 .env.*
 !.env.example
 
-# Local deployment parameters and database credentials
+# Local deployment parameters and database credentials / Parametres locaux et identifiants de base
 parameters.local.json
 *.local.json
 *.password
 
-# Database backups
+# Database backups / Sauvegardes de base de donnees
 *.sql
 *.sql.gz
 backups/
 
-# Local editor/OS files
+# Local editor/OS files / Fichiers locaux de l editeur et du systeme
 .vscode/
 .idea/
 .DS_Store
