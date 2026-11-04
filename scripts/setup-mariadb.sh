@@ -3,8 +3,8 @@
 
 set -euo pipefail
 
-# AWS Networking Lab - MariaDB automated setup
-# Run as root on Amazon Linux 2023.
+# AWS Networking Lab - MariaDB automated setup / Lab reseau AWS - configuration automatisee de MariaDB
+# Run as root on Amazon Linux 2023. / Executer en root sur Amazon Linux 2023.
 
 DB_NAME="network_lab"
 DB_USER="network_app"
@@ -12,19 +12,19 @@ DB_HOST="10.10.1.%"
 SECRET_DIR="/root/.config/aws-networking-lab"
 
 if [[ "$EUID" -ne 0 ]]; then
-    echo "Error: run this script with sudo."
+    echo "Error: run this script with sudo. / Erreur : executer ce script avec sudo."
     exit 1
 fi
 
-echo "[1/5] Installing MariaDB..."
+echo "[1/5] Installing MariaDB... / [1/5] Installation de MariaDB..."
 
 dnf install -y mariadb105-server openssl
 
-echo "[2/5] Starting MariaDB..."
+echo "[2/5] Starting MariaDB... / [2/5] Demarrage de MariaDB..."
 
 systemctl enable --now mariadb
 
-echo "[3/5] Creating database if needed..."
+echo "[3/5] Creating database if needed... / [3/5] Creation de la base si necessaire..."
 
 mariadb --protocol=socket <<SQL
 CREATE DATABASE IF NOT EXISTS \`network_lab\`
@@ -32,7 +32,7 @@ CREATE DATABASE IF NOT EXISTS \`network_lab\`
   COLLATE utf8mb4_unicode_ci;
 SQL
 
-echo "[4/5] Configuring application user..."
+echo "[4/5] Configuring application user... / [4/5] Configuration du compte applicatif..."
 
 USER_EXISTS=$(mariadb --protocol=socket -N -B -e \
     "SELECT COUNT(*) FROM mysql.global_priv
@@ -47,7 +47,7 @@ CREATE USER 'network_app'@'10.10.1.%'
 IDENTIFIED BY '${APP_PASSWORD}';
 SQL
 
-    # Store generated password locally with root-only access.
+    # Store generated password locally with root-only access. / Stocker le mot de passe localement, accessible uniquement a root.
     install -d -m 700 "$SECRET_DIR"
     umask 077
     printf '%s\n' "$APP_PASSWORD" \
@@ -55,11 +55,11 @@ SQL
 
     unset APP_PASSWORD
 
-    echo "New user created."
-    echo "Password stored in $SECRET_DIR/network-app.password"
+    echo "New user created. / Nouvel utilisateur cree."
+    echo "Password stored in $SECRET_DIR/network-app.password / Mot de passe stocke dans $SECRET_DIR/network-app.password"
 
 else
-    echo "User already exists. Existing password preserved."
+    echo "User already exists. Existing password preserved. / Utilisateur deja present. Mot de passe existant conserve."
 fi
 
 mariadb --protocol=socket <<SQL
@@ -68,11 +68,11 @@ ON \`network_lab\`.*
 TO 'network_app'@'10.10.1.%';
 SQL
 
-echo "[5/5] Verifying MariaDB..."
+echo "[5/5] Verifying MariaDB... / [5/5] Verification de MariaDB..."
 
 systemctl is-active --quiet mariadb
 
 mariadb --protocol=socket -e \
     "SHOW GRANTS FOR 'network_app'@'10.10.1.%';"
 
-echo "MariaDB setup completed successfully!"
+echo "MariaDB setup completed successfully! / Configuration de MariaDB terminee avec succes !"
