@@ -1,6 +1,8 @@
 # Sauvegarder et nettoyer
 
-[Accueil](../README.md) · [Déploiement](deployment-guide.md)
+[Français](cleanup.md) | [English](en/cleanup.md)
+
+[Accueil](../README.fr.md) · [Déploiement](deployment-guide.md)
 
 Le template ne définit pas de politique de rétention de la base. Supprimer la stack termine les instances ; le volume racine standard du backend est normalement supprimé à la terminaison. **Sauvegarder les données utiles et contrôler la sauvegarde avant toute suppression.** Basculer `LaunchEc2Instances=false` supprime également les instances.
 

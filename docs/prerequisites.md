@@ -1,6 +1,8 @@
 # Prérequis
 
-[Accueil](../README.md) · [Déploiement](deployment-guide.md)
+[Français](prerequisites.md) | [English](en/prerequisites.md)
+
+[Accueil](../README.fr.md) · [Déploiement](deployment-guide.md)
 
 ## Compte et outils
 

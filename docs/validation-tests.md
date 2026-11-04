@@ -1,6 +1,8 @@
 # Valider le lab
 
-[Accueil](../README.md) · [Déploiement](deployment-guide.md) · [Nettoyage](cleanup.md)
+[Français](validation-tests.md) | [English](en/validation-tests.md)
+
+[Accueil](../README.fr.md) · [Déploiement](deployment-guide.md) · [Nettoyage](cleanup.md)
 
 Ces contrôles sont à exécuter dans votre propre environnement. Les résultats décrits sont des **attendus**, pas une preuve d'exécution sur votre compte.
 
@@ -47,7 +49,7 @@ LAB_FRONTEND_PUBLIC_IP=$(aws cloudformation describe-stacks \
 curl --fail --max-time 15 "http://$LAB_FRONTEND_PUBLIC_IP"
 ```
 
-Attendu : `AWS Networking Lab - Frontend`. Le site utilise HTTP, pas HTTPS. Si nécessaire, ouvrir cette URL dans votre navigateur. Si le service n'est pas encore prêt, se connecter au frontend et examiner `sudo systemctl status httpd` et `sudo tail -n 50 /var/log/cloud-init-output.log`.
+Attendu : la page contient `AWS Networking Lab - Frontend` et son équivalent français. Le site utilise HTTP, pas HTTPS. Si nécessaire, ouvrir cette URL dans votre navigateur. Si le service n'est pas encore prêt, se connecter au frontend et examiner `sudo systemctl status httpd` et `sudo tail -n 50 /var/log/cloud-init-output.log`.
 
 ## 3. Base privée — sur le backend
 
@@ -98,7 +100,7 @@ sudo systemctl is-active mariadb
 exit
 ```
 
-Attendus : message `User already exists. Existing password preserved.`, succès final et base conservée. Refaire le test SQL du frontend avec le même mot de passe confirme que la réexécution l'a préservé. Il s'agit d'une idempotence limitée à la configuration prévue ; le script ne corrige pas toutes les dérives et ne supprime pas les permissions supplémentaires.
+Attendus : message `User already exists. Existing password preserved.` accompagné de sa traduction française, succès final et base conservée. Refaire le test SQL du frontend avec le même mot de passe confirme que la réexécution l'a préservé. Il s'agit d'une idempotence limitée à la configuration prévue ; le script ne corrige pas toutes les dérives et ne supprime pas les permissions supplémentaires.
 
 ## Dépannage ciblé
 

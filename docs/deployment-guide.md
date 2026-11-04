@@ -1,6 +1,8 @@
 # Déployer et reproduire le lab
 
-[Accueil](../README.md) · [Prérequis](prerequisites.md) · [Tests](validation-tests.md) · [Nettoyage](cleanup.md)
+[Français](deployment-guide.md) | [English](en/deployment-guide.md)
+
+[Accueil](../README.fr.md) · [Prérequis](prerequisites.md) · [Tests](validation-tests.md) · [Nettoyage](cleanup.md)
 
 Ce parcours crée **une nouvelle stack** dans votre compte. Pour une stack existante, lire la section dédiée avant toute modification. Toutes les commandes de votre ordinateur utilisent Bash / Git Bash.
 
@@ -167,7 +169,7 @@ sudo mariadb --protocol=socket -e "SHOW GRANTS FOR 'network_app'@'10.10.1.%';"
 sudo ss -lntp | grep ':3306'
 ```
 
-Le résultat attendu inclut `MariaDB setup completed successfully!`, `active`, la base `network_lab` et les permissions SELECT/INSERT/UPDATE/DELETE. Vérifier que MariaDB écoute sur une interface réseau permettant l'accès depuis le frontend ; une écoute uniquement sur `127.0.0.1` ne suffit pas.
+Les messages de progression du script sont bilingues anglais/français. Le résultat attendu inclut `MariaDB setup completed successfully!`, `active`, la base `network_lab` et les permissions SELECT/INSERT/UPDATE/DELETE. Vérifier que MariaDB écoute sur une interface réseau permettant l'accès depuis le frontend ; une écoute uniquement sur `127.0.0.1` ne suffit pas.
 
 Sur une première installation, le script génère le mot de passe de `network_app`. Pour le consulter **dans votre terminal privé uniquement**, sans le partager ni l'enregistrer dans Git :
 
@@ -183,7 +185,7 @@ Si Bash signale des caractères `\r`, convertir le script en fins de ligne LF da
 
 ## Stack existante : précautions de mise à jour
 
-Pour la PR de documentation, **aucune mise à jour AWS n'est nécessaire**. Ne pas relancer la procédure `CREATE` sur une stack existante.
+**Aucune mise à jour AWS n'est nécessaire pour lire ou partager la documentation**. Ne pas relancer la procédure `CREATE` sur une stack existante.
 
 Pour une future modification du template, préparer un Change Set de type `UPDATE`, reprendre explicitement les paramètres existants avec `UsePreviousValue=true`, puis vérifier les actions et remplacements avant exécution. Le paramètre `LatestAmiId` pointe vers la dernière AMI : même avec `UsePreviousValue=true`, AWS peut résoudre une nouvelle image et prévoir un remplacement EC2. Une modification du template demande donc un examen réel du Change Set.
 
