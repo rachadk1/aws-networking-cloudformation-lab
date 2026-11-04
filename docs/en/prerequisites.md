@@ -4,6 +4,10 @@
 
 [Home](../../README.md) · [Deployment](deployment-guide.md)
 
+## Install AWS CLI v2 on your computer
+
+**Install AWS CLI on your computer before following this lab.** Read the [Windows, macOS, and Linux installation guide](aws-cli-installation.md), then return here to configure AWS access. Close and reopen your terminal after installation; `aws --version` must report `aws-cli/2.`.
+
 ## Account and tools
 
 - A personal or training AWS account with permission to create the VPC network, EC2 instances, and CloudFormation resources in the template. This lab does not require creating an IAM role. Use an authorized working identity rather than root credentials.
