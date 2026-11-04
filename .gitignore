@@ -1,0 +1,24 @@
+# Local AWS/SSH credentials
+.aws/
+.ssh/
+*.pem
+*.key
+.env
+.env.*
+!.env.example
+
+# Local deployment parameters and database credentials
+parameters.local.json
+*.local.json
+*.password
+
+# Database backups
+*.sql
+*.sql.gz
+backups/
+
+# Local editor/OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
