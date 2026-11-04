@@ -3,6 +3,11 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Description: AWS Networking Lab - VPC, Subnets and Routing
 
+Parameters:
+  AdminCidr:
+    Type: String
+    Description: Your public IPv4 address in /32 CIDR notation
+
 Resources:
 
   # 01 - VPC
@@ -113,3 +118,64 @@ Resources:
     Properties:
       SubnetId: !Ref BackendSubnet
       RouteTableId: !Ref PrivateRouteTable
+
+
+  # 12 - Bastion Security Group
+  BastionSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SSH access to bastion from administrator IP
+      VpcId: !Ref LabVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref AdminCidr
+          Description: SSH from administrator
+      Tags:
+        - Key: Name
+          Value: lab-bastion-sg
+
+  # 13 - Frontend Security Group
+  FrontendSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: HTTP access and SSH from bastion
+      VpcId: !Ref LabVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: Public HTTP access
+
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: !Ref BastionSG
+          Description: SSH from bastion
+      Tags:
+        - Key: Name
+          Value: lab-frontend-sg
+
+  # 14 - Backend Security Group
+  BackendSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Private backend access
+      VpcId: !Ref LabVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: !Ref BastionSG
+          Description: SSH from bastion
+
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref FrontendSG
+          Description: MySQL from frontend
+      Tags:
+        - Key: Name
+          Value: lab-backend-sg
