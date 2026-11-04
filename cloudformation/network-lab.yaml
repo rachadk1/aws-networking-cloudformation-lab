@@ -1,40 +1,40 @@
 
 AWSTemplateFormatVersion: '2010-09-09'
 
-Description: AWS Networking Lab - VPC, Subnets and Routing
+Description: AWS Networking Lab - VPC, Subnets and Routing / Lab reseau AWS - VPC, sous-reseaux et routage
 
 Parameters:
   AdminCidr:
     Type: String
-    Description: Your public IPv4 address in /32 CIDR notation
+    Description: Your public IPv4 address in /32 CIDR notation / Votre adresse IPv4 publique au format CIDR /32
   EnableNatGateway:
     Type: String
     Default: 'false'
     AllowedValues:
       - 'true'
       - 'false'
-    Description: Enable or disable the NAT Gateway
+    Description: Enable or disable the NAT Gateway / Activer ou desactiver la passerelle NAT
 
   
-  # EC2 SSH Key Pair
+  # EC2 SSH Key Pair / Paire de cles SSH EC2
   EC2KeyPairName:
     Type: AWS::EC2::KeyPair::KeyName
     Default: 1st-web-server
-    Description: SSH Key Pair for EC2 instances
+    Description: SSH Key Pair for EC2 instances / Paire de cles SSH des instances EC2
 
-  # Amazon Linux 2023 AMI
+  # Amazon Linux 2023 AMI / AMI Amazon Linux 2023
   LatestAmiId:
     Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
     Default: '/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64'
 
-  # EC2 deployment control
+  # EC2 deployment control / Controle du deploiement EC2
   LaunchEc2Instances:
     Type: String
     Default: 'false'
     AllowedValues:
       - 'true'
       - 'false'
-    Description: Enable or disable EC2 instances
+    Description: Enable or disable EC2 instances / Activer ou desactiver les instances EC2
 
 
 
@@ -44,7 +44,7 @@ Conditions:
 
 Resources:
 
-  # 01 - VPC
+  # 01 - VPC / 01 - Reseau VPC
   LabVPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -55,7 +55,7 @@ Resources:
         - Key: Name
           Value: lab-vpc
 
-  # 02 - Public subnet for bastion
+  # 02 - Public subnet for bastion / 02 - Sous-reseau public du bastion
   BastionSubnet:
     Type: AWS::EC2::Subnet
     Properties:
@@ -67,7 +67,7 @@ Resources:
         - Key: Name
           Value: lab-bastion-public-subnet
 
-  # 03 - Public subnet for frontend
+  # 03 - Public subnet for frontend / 03 - Sous-reseau public du frontend
   FrontendSubnet:
     Type: AWS::EC2::Subnet
     Properties:
@@ -79,7 +79,7 @@ Resources:
         - Key: Name
           Value: lab-frontend-public-subnet
 
-  # 04 - Private subnet for backend
+  # 04 - Private subnet for backend / 04 - Sous-reseau prive du backend
   BackendSubnet:
     Type: AWS::EC2::Subnet
     Properties:
@@ -91,7 +91,7 @@ Resources:
         - Key: Name
           Value: lab-backend-private-subnet
 
-  # 05 - Internet Gateway
+  # 05 - Internet Gateway / 05 - Passerelle Internet
   LabInternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
@@ -99,14 +99,14 @@ Resources:
         - Key: Name
           Value: lab-igw
 
-  # 06 - Attach IGW to VPC
+  # 06 - Attach IGW to VPC / 06 - Attacher la passerelle Internet au VPC
   InternetGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       VpcId: !Ref LabVPC
       InternetGatewayId: !Ref LabInternetGateway
 
-  # 07 - Public route table
+  # 07 - Public route table / 07 - Table de routage publique
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -115,7 +115,7 @@ Resources:
         - Key: Name
           Value: lab-public-rt
 
-  # 08 - Default public route
+  # 08 - Default public route / 08 - Route publique par defaut
   PublicDefaultRoute:
     Type: AWS::EC2::Route
     DependsOn: InternetGatewayAttachment
@@ -124,7 +124,7 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref LabInternetGateway
 
-  # 09 - Associate public subnets
+  # 09 - Associate public subnets / 09 - Associer les sous-reseaux publics
   BastionRouteAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
@@ -137,7 +137,7 @@ Resources:
       SubnetId: !Ref FrontendSubnet
       RouteTableId: !Ref PublicRouteTable
 
-  # 10 - Private route table
+  # 10 - Private route table / 10 - Table de routage privee
   PrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -146,7 +146,7 @@ Resources:
         - Key: Name
           Value: lab-private-rt
 
-  # 11 - Associate backend subnet
+  # 11 - Associate backend subnet / 11 - Associer le sous-reseau du backend
   BackendRouteAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
@@ -154,68 +154,68 @@ Resources:
       RouteTableId: !Ref PrivateRouteTable
 
 
-  # 12 - Bastion Security Group
+  # 12 - Bastion Security Group / 12 - Groupe de securite du bastion
   BastionSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: SSH access to bastion from administrator IP
+      GroupDescription: SSH access to bastion from administrator IP / Acces SSH au bastion depuis l IP administrateur
       VpcId: !Ref LabVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           CidrIp: !Ref AdminCidr
-          Description: SSH from administrator
+          Description: SSH from administrator / SSH depuis l administrateur
       Tags:
         - Key: Name
           Value: lab-bastion-sg
 
-  # 13 - Frontend Security Group
+  # 13 - Frontend Security Group / 13 - Groupe de securite du frontend
   FrontendSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: HTTP access and SSH from bastion
+      GroupDescription: HTTP access and SSH from bastion / Acces HTTP et SSH depuis le bastion
       VpcId: !Ref LabVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
-          Description: Public HTTP access
+          Description: Public HTTP access / Acces HTTP public
 
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           SourceSecurityGroupId: !Ref BastionSG
-          Description: SSH from bastion
+          Description: SSH from bastion / SSH depuis le bastion
       Tags:
         - Key: Name
           Value: lab-frontend-sg
 
-  # 14 - Backend Security Group
+  # 14 - Backend Security Group / 14 - Groupe de securite du backend
   BackendSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Private backend access
+      GroupDescription: Private backend access / Acces au backend prive
       VpcId: !Ref LabVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           SourceSecurityGroupId: !Ref BastionSG
-          Description: SSH from bastion
+          Description: SSH from bastion / SSH depuis le bastion
 
         - IpProtocol: tcp
           FromPort: 3306
           ToPort: 3306
           SourceSecurityGroupId: !Ref FrontendSG
-          Description: MySQL from frontend
+          Description: MySQL from frontend / MySQL depuis le frontend
       Tags:
         - Key: Name
           Value: lab-backend-sg
 
 
-  # 15 - Elastic IP for NAT Gateway
+  # 15 - Elastic IP for NAT Gateway / 15 - Adresse Elastic IP du NAT Gateway
   NatEIP:
     Type: AWS::EC2::EIP
     Condition: CreateNatGateway
@@ -226,7 +226,7 @@ Resources:
         - Key: Name
           Value: lab-nat-eip
 
-  # 16 - Public NAT Gateway
+  # 16 - Public NAT Gateway / 16 - Passerelle NAT publique
   LabNatGateway:
     Type: AWS::EC2::NatGateway
     Condition: CreateNatGateway
@@ -240,7 +240,7 @@ Resources:
         - Key: Name
           Value: lab-nat-gateway
 
-  # 17 - Default route for private subnet
+  # 17 - Default route for private subnet / 17 - Route par defaut du sous-reseau prive
   PrivateDefaultRoute:
     Type: AWS::EC2::Route
     Condition: CreateNatGateway
@@ -250,7 +250,7 @@ Resources:
       NatGatewayId: !Ref LabNatGateway
 
   
-  # 18 - Bastion EC2
+  # 18 - Bastion EC2 / 18 - Instance EC2 du bastion
   BastionInstance:
     Type: AWS::EC2::Instance
     Condition: CreateEC2
@@ -269,7 +269,7 @@ Resources:
         - Key: Name
           Value: lab-bastion-ec2
 
-  # 19 - Frontend EC2
+  # 19 - Frontend EC2 / 19 - Instance EC2 du frontend
   FrontendInstance:
     Type: AWS::EC2::Instance
     Condition: CreateEC2
@@ -290,13 +290,13 @@ Resources:
           #!/bin/bash
           set -e
           dnf install -y httpd
-          echo '<h1>AWS Networking Lab - Frontend</h1>' > /var/www/html/index.html
+          echo '<h1>AWS Networking Lab - Frontend / Laboratoire reseau AWS - Frontend</h1>' > /var/www/html/index.html
           systemctl enable --now httpd
       Tags:
         - Key: Name
           Value: lab-frontend-ec2
 
-  # 20 - Backend EC2
+  # 20 - Backend EC2 / 20 - Instance EC2 du backend
   BackendInstance:
     Type: AWS::EC2::Instance
     Condition: CreateEC2
@@ -315,7 +315,7 @@ Resources:
         - Key: Name
           Value: lab-backend-ec2
 
-    # 21 - S3 Gateway Endpoint for private subnet
+    # 21 - S3 Gateway Endpoint for private subnet / 21 - Point de terminaison Gateway S3 du sous-reseau prive
   S3GatewayEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -329,17 +329,17 @@ Resources:
 Outputs:
   BastionPublicIP:
     Condition: CreateEC2
-    Description: Public IP of Bastion EC2
+    Description: Public IP of Bastion EC2 / IP publique du bastion EC2
     Value: !GetAtt BastionInstance.PublicIp
 
   FrontendPublicIP:
     Condition: CreateEC2
-    Description: Public IP of Frontend EC2
+    Description: Public IP of Frontend EC2 / IP publique du frontend EC2
     Value: !GetAtt FrontendInstance.PublicIp
 
   BackendPrivateIP:
     Condition: CreateEC2
-    Description: Private IP of Backend EC2
+    Description: Private IP of Backend EC2 / IP privee du backend EC2
     Value: !GetAtt BackendInstance.PrivateIp
 
 
