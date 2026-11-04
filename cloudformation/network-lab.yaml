@@ -1,10 +1,11 @@
+
 AWSTemplateFormatVersion: '2010-09-09'
 
-Description: >
-  AWS Networking Lab recreated with CloudFormation.
+Description: AWS Networking Lab - VPC, Subnets and Routing
 
 Resources:
 
+  # 01 - VPC
   LabVPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -14,3 +15,101 @@ Resources:
       Tags:
         - Key: Name
           Value: lab-vpc
+
+  # 02 - Public subnet for bastion
+  BastionSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref LabVPC
+      CidrBlock: 10.10.0.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: lab-bastion-public-subnet
+
+  # 03 - Public subnet for frontend
+  FrontendSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref LabVPC
+      CidrBlock: 10.10.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: lab-frontend-public-subnet
+
+  # 04 - Private subnet for backend
+  BackendSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref LabVPC
+      CidrBlock: 10.10.11.0/24
+      AvailabilityZone: !Select [1, !GetAZs '']
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: lab-backend-private-subnet
+
+  # 05 - Internet Gateway
+  LabInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: lab-igw
+
+  # 06 - Attach IGW to VPC
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref LabVPC
+      InternetGatewayId: !Ref LabInternetGateway
+
+  # 07 - Public route table
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref LabVPC
+      Tags:
+        - Key: Name
+          Value: lab-public-rt
+
+  # 08 - Default public route
+  PublicDefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref LabInternetGateway
+
+  # 09 - Associate public subnets
+  BastionRouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref BastionSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  FrontendRouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref FrontendSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  # 10 - Private route table
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref LabVPC
+      Tags:
+        - Key: Name
+          Value: lab-private-rt
+
+  # 11 - Associate backend subnet
+  BackendRouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref BackendSubnet
+      RouteTableId: !Ref PrivateRouteTable
