@@ -15,13 +15,14 @@ git clone --branch develop https://github.com/rachadk1/aws-networking-cloudforma
 cd aws-networking-cloudformation-lab
 ```
 
-Les cinq guides de reproduction sont disponibles en français et en anglais. Utilisez votre propre compte AWS, une Key Pair de la région choisie et votre IPv4 publique d'administration.
+Les guides de reproduction sont disponibles en français et en anglais. Utilisez votre propre compte AWS, une Key Pair de la région choisie et votre IPv4 publique d'administration.
 
-1. [Prérequis et coûts](docs/prerequisites.md)
-2. [Architecture et sept étapes pédagogiques](docs/architecture.md)
-3. [Déploiement, SSH et installation MariaDB](docs/deployment-guide.md)
-4. [Validation et dépannage](docs/validation-tests.md)
-5. [Sauvegarde et nettoyage](docs/cleanup.md)
+1. [Installer AWS CLI v2 sur votre ordinateur](docs/aws-cli-installation.md)
+2. [Prérequis et coûts](docs/prerequisites.md)
+3. [Architecture et sept étapes pédagogiques](docs/architecture.md)
+4. [Déploiement, SSH et installation MariaDB](docs/deployment-guide.md)
+5. [Validation et dépannage](docs/validation-tests.md)
+6. [Sauvegarde et nettoyage](docs/cleanup.md)
 
 ## Architecture
 
@@ -70,6 +71,7 @@ Le schéma présente les flux autorisés. Le frontend sert une page Apache stati
 | Contenu | Français | English |
 | --- | --- | --- |
 | Présentation du projet | [README](README.fr.md) | [Overview](README.md) |
+| Installation AWS CLI | [Guide](docs/aws-cli-installation.md) | [Guide](docs/en/aws-cli-installation.md) |
 | Prérequis et coûts | [Guide](docs/prerequisites.md) | [Guide](docs/en/prerequisites.md) |
 | Architecture et étapes | [Guide](docs/architecture.md) | [Guide](docs/en/architecture.md) |
 | Déploiement et SSH | [Guide](docs/deployment-guide.md) | [Guide](docs/en/deployment-guide.md) |
